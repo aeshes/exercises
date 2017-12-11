@@ -55,6 +55,12 @@ private:
 			encoding += encodedDigit(letter);
 	}
 
+	bool isVowel(char letter) const
+	{
+		return
+			std::string("aeiouy").find(lower(letter)) != std::string::npos;
+	}
+
 	bool isComplete(std::string const& encoding) const
 	{
 		return encoding.length() == MaxCodeLength;

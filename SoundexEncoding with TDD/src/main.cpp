@@ -78,6 +78,11 @@ TEST_F(SoundexEncoding, CombinesDuplicateCodesWhen2ndLetterDuplicates1st)
 	ASSERT_THAT(soundex.encode("Bbcd"), Eq("B230"));
 }
 
+TEST_F(SoundexEncoding, DISABLED_DoesNotCombineDuplicateEncodingsSeparatedByVowels)
+{
+	ASSERT_THAT(soundex.encode("Jbob"), Eq("J110"));
+}
+
 int main(int argc, char **argv)
 {
 	testing::InitGoogleMock(&argc, argv);
