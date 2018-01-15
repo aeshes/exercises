@@ -18,19 +18,9 @@ public:
 	Money(int amount_, string currency_);
 	static shared_ptr<Money> dollar(int amount);
 	static shared_ptr<Money> franc(int amount);
-	virtual shared_ptr<Money> times(int value) const
-	{
-		return make_shared<Money>(amount * value, currency_);
-	}
-	virtual bool equals(shared_ptr<Money> money) const
-	{
-		return amount == money->amount
-			&& currency() == money->currency();
-	}
-	string currency() const
-	{
-		return currency_;
-	}
+	shared_ptr<Money> times(int value) const;
+	bool equals(shared_ptr<Money> money) const;
+	string currency() const;
 protected:
 	int amount;
 	string currency_;

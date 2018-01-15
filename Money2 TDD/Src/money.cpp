@@ -18,6 +18,22 @@ shared_ptr<Money> Money::franc(int amount)
 	return make_shared<Money>(amount, "CHF");
 }
 
+shared_ptr<Money> Money::times(int value) const
+{
+	return make_shared<Money>(amount * value, currency_);
+}
+
+bool Money::equals(shared_ptr<Money> money) const
+{
+	return amount == money->amount
+		&& currency() == money->currency();
+}
+
+string Money::currency() const
+{
+	return currency_;
+}
+
 
 using ::testing::Eq;
 
