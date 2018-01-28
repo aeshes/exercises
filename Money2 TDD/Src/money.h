@@ -1,29 +1,62 @@
 #ifndef MONEY_H
 #define MONEY_H
 
-#include <memory>
 #include <string>
 #include <cassert>
+#include <memory>
 
-using std::shared_ptr;
-using std::make_shared;
 using std::string;
+using std::unique_ptr;
+using std::make_unique;
 
+class Money;
+
+class Expression
+{
+public:
+	virtual unique_ptr<Money> reduce(const string& to) const
+	{
+		return nullptr;
+	}
+};
 
 class Dollar;
 
-class Money
+class Money : public Expression
 {
 public:
 	Money(int amount_, string currency_);
+
 	static Money dollar(int amount);
 	static Money franc(int amount);
-	Money times(int value) const;
-	bool equals(const Money& money) const;
+
 	string currency() const;
-protected:
+	Money times(int value) const;
+	unique_ptr<Money> reduce(const string& to) const;
+
+	bool operator==(const Money& money) const;
+	Expression operator+(const Money& right) const;
+public:
 	int amount;
 	string currency_;
+};
+
+class Bank
+{
+public:
+	unique_ptr<Money> reduce(const Expression& source, const string& to) const;
+};
+
+struct Sum : Expression
+{
+	Sum(Money augend, Money addend)
+		: augend(augend), addend(addend) {}
+	unique_ptr<Money> reduce(const string& to) const
+	{
+		return make_unique<Money>(augend.amount + addend.amount, to);
+	}
+	Money augend;
+	Money addend;
 };
 
 #endif

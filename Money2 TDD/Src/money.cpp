@@ -23,15 +23,30 @@ Money Money::times(int value) const
 	return Money(amount * value, currency_);
 }
 
-bool Money::equals(const Money& money) const
+bool Money::operator==(const Money& money) const
 {
 	return amount == money.amount
 		&& currency() == money.currency();
 }
 
+Expression Money::operator+(const Money& right) const
+{
+	return Sum(*this, right);
+}
+
 string Money::currency() const
 {
 	return currency_;
+}
+
+unique_ptr<Money> Money::reduce(const string& to) const
+{
+	return make_unique<Money>(*this);
+}
+
+unique_ptr<Money> Bank::reduce(const Expression& source, const string& to) const
+{
+	return source.reduce(to);
 }
 
 
@@ -40,15 +55,15 @@ using ::testing::Eq;
 TEST(Money, TestDollarMultiplication)
 {
 	Money five = Money::dollar(5);
-	ASSERT_TRUE(five.times(2).equals(Money::dollar(10)));
-	ASSERT_TRUE(five.times(3).equals(Money::dollar(15)));
+	ASSERT_TRUE(five.times(2) == (Money::dollar(10)));
+	ASSERT_TRUE(five.times(3) == (Money::dollar(15)));
 }
 
 TEST(Money, TestFrancMultiplication)
 {
 	Money five = Money::franc(5);
-	ASSERT_TRUE(five.times(2).equals(Money::franc(10)));
-	ASSERT_TRUE(five.times(3).equals(Money::franc(15)));
+	ASSERT_TRUE(five.times(2) == (Money::franc(10)));
+	ASSERT_TRUE(five.times(3) == (Money::franc(15)));
 }
 
 TEST(Money, TestCurrency)
@@ -56,3 +71,28 @@ TEST(Money, TestCurrency)
 	ASSERT_THAT(Money::dollar(1).currency(), Eq("USD"));
 	ASSERT_THAT(Money::franc(1).currency(), Eq("CHF"));
 }
+
+TEST(Money, TestReduceMoney)
+{
+	Bank bank;
+	unique_ptr<Money> result = bank.reduce(Money::dollar(1), "USD");
+	ASSERT_THAT(Money::dollar(1), Eq(*result));
+}
+
+TEST(Money, DISABLED_TestSimpleAddition)
+{
+	Money five = Money::dollar(5);
+	Expression sum = five + five;
+	Bank bank;
+	unique_ptr<Money> reduced = bank.reduce(sum, "USD");
+	ASSERT_THAT(*reduced, Eq(Money::dollar(10)));
+}
+
+/*TEST(Money, TestPlusReturnsSum)
+{
+	Money five = Money::dollar(5);
+	Expression result = five + five;
+	Sum sum = static_cast<Sum>(result);
+	ASSERT_THAT(five, sum.augend);
+	ASSERT_THAT(five, sum.addend);
+}*/
