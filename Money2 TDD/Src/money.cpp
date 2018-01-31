@@ -55,15 +55,15 @@ using ::testing::Eq;
 TEST(Money, TestDollarMultiplication)
 {
 	Money five = Money::dollar(5);
-	ASSERT_TRUE(five.times(2) == (Money::dollar(10)));
-	ASSERT_TRUE(five.times(3) == (Money::dollar(15)));
+	ASSERT_TRUE(five.times(2) == Money::dollar(10));
+	ASSERT_TRUE(five.times(3) == Money::dollar(15));
 }
 
 TEST(Money, TestFrancMultiplication)
 {
 	Money five = Money::franc(5);
-	ASSERT_TRUE(five.times(2) == (Money::franc(10)));
-	ASSERT_TRUE(five.times(3) == (Money::franc(15)));
+	ASSERT_TRUE(five.times(2) == Money::franc(10));
+	ASSERT_TRUE(five.times(3) == Money::franc(15));
 }
 
 TEST(Money, TestCurrency)
