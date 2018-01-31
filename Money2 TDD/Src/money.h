@@ -45,6 +45,10 @@ class Bank
 {
 public:
 	unique_ptr<Money> reduce(const Expression& source, const string& to) const;
+	void addRate(const string& from, const string& to, int c)
+	{
+
+	}
 };
 
 struct Sum : Expression

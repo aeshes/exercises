@@ -41,7 +41,8 @@ string Money::currency() const
 
 unique_ptr<Money> Money::reduce(const string& to) const
 {
-	return make_unique<Money>(*this);
+	int rate = (currency_ == "CHF") && to == "USD" ? 2 : 1;
+	return make_unique<Money>(amount/rate, to);
 }
 
 unique_ptr<Money> Bank::reduce(const Expression& source, const string& to) const
@@ -86,6 +87,14 @@ TEST(Money, DISABLED_TestSimpleAddition)
 	Bank bank;
 	unique_ptr<Money> reduced = bank.reduce(sum, "USD");
 	ASSERT_THAT(*reduced, Eq(Money::dollar(10)));
+}
+
+TEST(Money, TestReduceMoneyDifferentCurrency)
+{
+	Bank bank;
+	bank.addRate("CHF", "USD", 2);
+	unique_ptr<Money> result = bank.reduce(Money::franc(2), "USD");
+	ASSERT_THAT(Money::dollar(1), Eq(*result));
 }
 
 /*TEST(Money, TestPlusReturnsSum)
