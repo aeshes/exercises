@@ -50,6 +50,11 @@ unique_ptr<Money> Bank::reduce(const Expression& source, const string& to) const
 	return source.reduce(*this, to);
 }
 
+int Bank::rate(const string& from, const string& to) const
+{
+	return (from == "CHF") && (to == "USD") ? 2 : 1;
+}
+
 
 using ::testing::Eq;
 

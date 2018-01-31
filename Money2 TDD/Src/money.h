@@ -50,6 +50,7 @@ public:
 	{
 
 	}
+	int rate(const string& from, const string& to) const;
 };
 
 struct Sum : Expression
