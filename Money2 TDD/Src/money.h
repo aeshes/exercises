@@ -4,10 +4,13 @@
 #include <string>
 #include <cassert>
 #include <memory>
+#include <map>
 
 using std::string;
 using std::unique_ptr;
 using std::make_unique;
+using std::pair;
+using std::make_pair;
 
 class Money;
 class Bank;
@@ -46,11 +49,11 @@ class Bank
 {
 public:
 	unique_ptr<Money> reduce(const Expression& source, const string& to) const;
-	void addRate(const string& from, const string& to, int c)
-	{
-
-	}
+	void addRate(const string& from, const string& to, int rate);
 	int rate(const string& from, const string& to) const;
+
+private:
+	std::map<pair<string, string>, int> rates;
 };
 
 struct Sum : Expression

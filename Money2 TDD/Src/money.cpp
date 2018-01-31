@@ -41,13 +41,18 @@ string Money::currency() const
 
 unique_ptr<Money> Money::reduce(const Bank& bank, const string& to) const
 {
-	int rate = (currency_ == "CHF") && (to == "USD") ? 2 : 1;
+	int rate = bank.rate(currency_, to);
 	return make_unique<Money>(amount/rate, to);
 }
 
 unique_ptr<Money> Bank::reduce(const Expression& source, const string& to) const
 {
 	return source.reduce(*this, to);
+}
+
+void Bank::addRate(const string& from, const string& to, int rate)
+{
+	rates.emplace(make_pair(from, to), rate);
 }
 
 int Bank::rate(const string& from, const string& to) const
