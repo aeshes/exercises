@@ -39,15 +39,15 @@ string Money::currency() const
 	return currency_;
 }
 
-unique_ptr<Money> Money::reduce(const string& to) const
+unique_ptr<Money> Money::reduce(const Bank& bank, const string& to) const
 {
-	int rate = (currency_ == "CHF") && to == "USD" ? 2 : 1;
+	int rate = (currency_ == "CHF") && (to == "USD") ? 2 : 1;
 	return make_unique<Money>(amount/rate, to);
 }
 
 unique_ptr<Money> Bank::reduce(const Expression& source, const string& to) const
 {
-	return source.reduce(to);
+	return source.reduce(*this, to);
 }
 
 

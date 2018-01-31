@@ -10,11 +10,12 @@ using std::unique_ptr;
 using std::make_unique;
 
 class Money;
+class Bank;
 
 class Expression
 {
 public:
-	virtual unique_ptr<Money> reduce(const string& to) const
+	virtual unique_ptr<Money> reduce(const Bank& bank, const string& to) const
 	{
 		return nullptr;
 	}
@@ -32,7 +33,7 @@ public:
 
 	string currency() const;
 	Money times(int value) const;
-	unique_ptr<Money> reduce(const string& to) const;
+	unique_ptr<Money> reduce(const Bank& bank, const string& to) const;
 
 	bool operator==(const Money& money) const;
 	Expression operator+(const Money& right) const;
@@ -55,7 +56,7 @@ struct Sum : Expression
 {
 	Sum(Money augend, Money addend)
 		: augend(augend), addend(addend) {}
-	unique_ptr<Money> reduce(const string& to) const
+	unique_ptr<Money> reduce(const Bank& bank, const string& to) const
 	{
 		return make_unique<Money>(augend.amount + addend.amount, to);
 	}
