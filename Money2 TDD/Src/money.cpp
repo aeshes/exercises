@@ -57,7 +57,8 @@ void Bank::addRate(const string& from, const string& to, int rate)
 
 int Bank::rate(const string& from, const string& to) const
 {
-	return (from == "CHF") && (to == "USD") ? 2 : 1;
+	if (from == to) return 1;
+	return rates.at(make_pair(from, to));
 }
 
 
@@ -105,6 +106,11 @@ TEST(Money, TestReduceMoneyDifferentCurrency)
 	bank.addRate("CHF", "USD", 2);
 	unique_ptr<Money> result = bank.reduce(Money::franc(2), "USD");
 	ASSERT_THAT(Money::dollar(1), Eq(*result));
+}
+
+TEST(Money, TestIdentityRate)
+{
+	ASSERT_THAT(Bank().rate("USD", "USD"), Eq(1));
 }
 
 /*TEST(Money, TestPlusReturnsSum)
