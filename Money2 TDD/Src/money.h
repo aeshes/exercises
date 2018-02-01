@@ -39,7 +39,7 @@ public:
 	unique_ptr<Money> reduce(const Bank& bank, const string& to) const;
 
 	bool operator==(const Money& money) const;
-	Expression operator+(const Money& right) const;
+	unique_ptr<Expression> operator+(const Money& right) const;
 public:
 	int amount;
 	string currency_;
@@ -60,10 +60,8 @@ struct Sum : Expression
 {
 	Sum(Money augend, Money addend)
 		: augend(augend), addend(addend) {}
-	unique_ptr<Money> reduce(const Bank& bank, const string& to) const
-	{
-		return make_unique<Money>(augend.amount + addend.amount, to);
-	}
+	unique_ptr<Money> reduce(const Bank& bank, const string& to) const;
+
 	Money augend;
 	Money addend;
 };

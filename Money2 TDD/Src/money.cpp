@@ -29,9 +29,9 @@ bool Money::operator==(const Money& money) const
 		&& currency() == money.currency();
 }
 
-Expression Money::operator+(const Money& right) const
+unique_ptr<Expression> Money::operator+(const Money& right) const
 {
-	return Sum(*this, right);
+	return make_unique<Sum>(*this, right);
 }
 
 string Money::currency() const
@@ -48,6 +48,13 @@ unique_ptr<Money> Money::reduce(const Bank& bank, const string& to) const
 unique_ptr<Money> Bank::reduce(const Expression& source, const string& to) const
 {
 	return source.reduce(*this, to);
+}
+
+unique_ptr<Money> Sum::reduce(const Bank& bank, const string& to) const
+{
+	int amount = augend.reduce(bank, to)->amount
+		+ addend.reduce(bank, to)->amount;
+	return make_unique<Money>(amount, to);
 }
 
 void Bank::addRate(const string& from, const string& to, int rate)
@@ -94,9 +101,9 @@ TEST(Money, TestReduceMoney)
 TEST(Money, DISABLED_TestSimpleAddition)
 {
 	Money five = Money::dollar(5);
-	Expression sum = five + five;
+	unique_ptr<Expression> sum = five + five;
 	Bank bank;
-	unique_ptr<Money> reduced = bank.reduce(sum, "USD");
+	unique_ptr<Money> reduced = bank.reduce(*sum, "USD");
 	ASSERT_THAT(*reduced, Eq(Money::dollar(10)));
 }
 
@@ -111,6 +118,16 @@ TEST(Money, TestReduceMoneyDifferentCurrency)
 TEST(Money, TestIdentityRate)
 {
 	ASSERT_THAT(Bank().rate("USD", "USD"), Eq(1));
+}
+
+TEST(Money, TestMixedAddition)
+{
+	Money fiveBucks = Money::dollar(5);
+	Money tenFrancs = Money::franc(10);
+	Bank bank;
+	bank.addRate("CHF", "USD", 2);
+	unique_ptr<Money> result = bank.reduce(*(fiveBucks + tenFrancs), "USD");
+	ASSERT_THAT(Money::dollar(10), Eq(*result));
 }
 
 /*TEST(Money, TestPlusReturnsSum)
