@@ -8,17 +8,26 @@
 
 using std::cin;
 using std::cout;
+using std::cerr;
 using std::endl;
 
 
 int main()
 {
-	Stack<int> st;
-	st.push(0);
-	st.push(1);
-	st.push(2);
+	try
+	{
+		Stack<int> st;
+		st.push(1);
+		cout << st.top() << endl;
 
-	cout << st.top() << endl;
+		st.pop();
+		st.pop();
+	}
+	catch (std::exception const& ex)
+	{
+		cerr << "Exception: " << ex.what() << endl;
+		return EXIT_FAILURE;
+	}
 
 	return 0;
 }
