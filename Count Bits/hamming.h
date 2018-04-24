@@ -2,6 +2,7 @@
 #define HAMMING_H
 
 #include <cstddef>
+#include <QDebug>
 
 inline unsigned count(uint32_t n)
 {
